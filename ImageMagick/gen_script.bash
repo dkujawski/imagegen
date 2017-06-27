@@ -15,8 +15,6 @@ size=${1}
 count=${2}
 output_dir=${3}
 
-scripts_dir="scripts"
-
 script_file_name=$(basename ${4})
 script_name=${script_file_name%.*}
 out=${output_dir}/${script_name}_${size}_${count}
