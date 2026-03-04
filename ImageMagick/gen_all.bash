@@ -1,26 +1,22 @@
 #!/bin/bash
+set -euo pipefail
 
-if [ -z ${1} ] || [ -z ${2} ] || [ -z ${3} ]; then
+if [ $# -lt 3 ]; then
     echo "missing params"
     echo "${0} size count outputdir"
-    exit
+    exit 2
 fi
-    
+
 size=${1}
 count=${2}
 output_dir=${3}
 
-scripts_dir="scripts"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 
-for s in ${scripts_dir}/*.bash
-    do
-        script_file_name=$(basename $s)
-        script_name=${script_file_name%.*}
-        out=${output_dir}/${script_name}_${size}_${count}
-        for i in $(seq -w ${count})
-            do
-                ${s} ${size} ${out} ${i}
-            done
-    done
-
-exit $?
+echo "[DEPRECATED] gen_all.bash is a compatibility shim. Please use imagegen run-all." >&2
+PYTHONPATH="${REPO_ROOT}/src${PYTHONPATH:+:${PYTHONPATH}}" \
+python3 -m imagegen_cli run-all \
+    --size "${size}" \
+    --count "${count}" \
+    --output-dir "${output_dir}"

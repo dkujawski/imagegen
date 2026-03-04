@@ -1,26 +1,24 @@
 #!/bin/bash
+set -euo pipefail
 
-if [ -z ${1} ] || [ -z ${2} ] || [ -z ${3} ] || [ -z ${4} ]; then
+if [ $# -lt 4 ]; then
     echo "missing params"
     echo "${0} size count outputdir script"
-    exit
+    exit 2
 fi
-   
-if [ ! -e ${4} ]; then
-    echo "file not found: ${4}"
-    exit
-fi
-    
+
 size=${1}
 count=${2}
 output_dir=${3}
+script_path=${4}
 
-script_file_name=$(basename ${4})
-script_name=${script_file_name%.*}
-out=${output_dir}/${script_name}_${size}_${count}
-for i in $(seq -w ${count})
-    do
-        ${4} ${size} ${out} ${i}
-    done
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 
-exit $?
+echo "[DEPRECATED] gen_script.bash is a compatibility shim. Please use imagegen run-script." >&2
+PYTHONPATH="${REPO_ROOT}/src${PYTHONPATH:+:${PYTHONPATH}}" \
+python3 -m imagegen_cli run-script \
+    --size "${size}" \
+    --count "${count}" \
+    --output-dir "${output_dir}" \
+    --script-path "${script_path}"
