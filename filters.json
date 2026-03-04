@@ -1,0 +1,124 @@
+{
+  "version": 1,
+  "filters": [
+    {
+      "id": "fractal_swirl",
+      "name": "Fractal Swirl",
+      "script_path": "ImageMagick/scripts/fractal_swirl.bash",
+      "category": "fractal",
+      "tags": ["plasma", "swirl", "abstract"],
+      "parameters": [
+        {"name": "size", "type": "int", "min": 32, "max": 4096, "default": 512, "step": 32},
+        {"name": "output_dir", "type": "path", "default": "./out"},
+        {"name": "file_name", "type": "str", "default": "image"}
+      ],
+      "output": {
+        "extension": "png",
+        "mode": "single",
+        "preview_safe_limits": {"max_size": 1024}
+      }
+    },
+    {
+      "id": "fractal_plasma",
+      "name": "Fractal Plasma",
+      "script_path": "ImageMagick/scripts/fractal_plasma.bash",
+      "category": "fractal",
+      "tags": ["plasma", "color", "abstract"],
+      "parameters": [
+        {"name": "size", "type": "int", "min": 32, "max": 4096, "default": 512, "step": 32},
+        {"name": "output_dir", "type": "path", "default": "./out"},
+        {"name": "file_name", "type": "str", "default": "image"}
+      ],
+      "output": {
+        "extension": "png",
+        "mode": "single",
+        "preview_safe_limits": {"max_size": 1024}
+      }
+    },
+    {
+      "id": "fractal_filaments",
+      "name": "Fractal Filaments",
+      "script_path": "ImageMagick/scripts/fractal_filaments.bash",
+      "category": "fractal",
+      "tags": ["plasma", "mono", "filament"],
+      "parameters": [
+        {"name": "size", "type": "int", "min": 32, "max": 4096, "default": 512, "step": 32},
+        {"name": "output_dir", "type": "path", "default": "./out"},
+        {"name": "file_name", "type": "str", "default": "image"}
+      ],
+      "output": {
+        "extension": "png",
+        "mode": "single",
+        "preview_safe_limits": {"max_size": 1024}
+      }
+    },
+    {
+      "id": "fractal_colour_contours",
+      "name": "Fractal Colour Contours",
+      "script_path": "ImageMagick/scripts/fractal_colour_contours.bash",
+      "category": "fractal",
+      "tags": ["contours", "edge", "abstract"],
+      "parameters": [
+        {"name": "size", "type": "int", "min": 32, "max": 4096, "default": 512, "step": 32},
+        {"name": "output_dir", "type": "path", "default": "./out"},
+        {"name": "file_name", "type": "str", "default": "image"}
+      ],
+      "output": {
+        "extension": "png",
+        "mode": "single",
+        "preview_safe_limits": {"max_size": 1024}
+      }
+    },
+    {
+      "id": "fractal_colour_contours_256",
+      "name": "Fractal Colour Contours 256",
+      "script_path": "ImageMagick/scripts/fractal_colour_contours-256.bash",
+      "category": "fractal",
+      "tags": ["contours", "edge", "high-blur"],
+      "parameters": [
+        {"name": "size", "type": "int", "min": 32, "max": 4096, "default": 512, "step": 32},
+        {"name": "output_dir", "type": "path", "default": "./out"},
+        {"name": "file_name", "type": "str", "default": "image"}
+      ],
+      "output": {
+        "extension": "png",
+        "mode": "single",
+        "preview_safe_limits": {"max_size": 1024}
+      }
+    },
+    {
+      "id": "noise_paint_areas",
+      "name": "Noise Paint Areas",
+      "script_path": "ImageMagick/scripts/noise_paint_areas.bash",
+      "category": "noise",
+      "tags": ["noise", "paint", "texture"],
+      "parameters": [
+        {"name": "size", "type": "int", "min": 32, "max": 4096, "default": 512, "step": 32},
+        {"name": "output_dir", "type": "path", "default": "./out"},
+        {"name": "file_name", "type": "str", "default": "image"}
+      ],
+      "output": {
+        "extension": "png",
+        "mode": "single",
+        "preview_safe_limits": {"max_size": 1024}
+      }
+    },
+    {
+      "id": "hextile_lines",
+      "name": "Hextile Lines",
+      "script_path": "ImageMagick/scripts/hextile_lines.bash",
+      "category": "tile",
+      "tags": ["hex", "tile", "pattern"],
+      "parameters": [
+        {"name": "size", "type": "int", "min": 32, "max": 2048, "default": 512, "step": 32},
+        {"name": "output_dir", "type": "path", "default": "./out"},
+        {"name": "file_name", "type": "str", "default": "image"}
+      ],
+      "output": {
+        "extension": "png",
+        "mode": "single",
+        "preview_safe_limits": {"max_size": 768}
+      }
+    }
+  ]
+}
