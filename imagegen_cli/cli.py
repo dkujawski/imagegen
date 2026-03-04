@@ -6,6 +6,7 @@ import subprocess
 from pathlib import Path
 
 from .filter_manifest import FilterDefinition, ParameterDefinition, load_manifest
+from .history import build_metadata, metadata_sidecar_path, replay_from_metadata, write_metadata
 
 
 def _arg_type_for(param: ParameterDefinition):
@@ -50,6 +51,10 @@ def build_parser() -> argparse.ArgumentParser:
     run_parser.add_argument("filter_id")
     run_parser.add_argument("--dry-run", action="store_true", help="Only print script command")
     run_parser.set_defaults(_manifest=manifest)
+
+    replay_parser = sub.add_parser("replay", help="Replay previously recorded generation metadata")
+    replay_parser.add_argument("--from", dest="metadata_path", required=True, help="Path to metadata sidecar JSON")
+    replay_parser.add_argument("--dry-run", action="store_true", help="Only print replay commands")
 
     return parser
 
@@ -126,13 +131,25 @@ def cmd_run_filter(args: argparse.Namespace, extras: list[str]) -> int:
     values = {p.name: getattr(parsed, p.name) for p in f.parameters}
     script = Path(__file__).resolve().parents[1] / f.script_path
 
-    cmd = [str(script), str(values["size"]), str(values["output_dir"]), str(values["file_name"])]
+    output_dir = Path(values["output_dir"]).expanduser().resolve()
+    output_dir.mkdir(parents=True, exist_ok=True)
+    values["output_dir"] = str(output_dir)
+
+    cmd = [str(script), str(values["size"]), str(output_dir), str(values["file_name"])]
     if args.dry_run:
         print(" ".join(cmd))
         return 0
 
     subprocess.run(cmd, check=True)
+    metadata = build_metadata(filter_id=f.id, values=values, commands=[cmd], script_path=script)
+    sidecar = metadata_sidecar_path(output_dir=output_dir, file_name=str(values["file_name"]))
+    write_metadata(metadata, sidecar)
+    print(f"metadata written: {sidecar}")
     return 0
+
+
+def cmd_replay(args: argparse.Namespace) -> int:
+    return replay_from_metadata(Path(args.metadata_path).expanduser().resolve(), dry_run=args.dry_run)
 
 
 def main() -> int:
@@ -145,6 +162,8 @@ def main() -> int:
         return cmd_inspect_filter(args)
     if args.command == "run-filter":
         return cmd_run_filter(args, extras)
+    if args.command == "replay":
+        return cmd_replay(args)
 
     parser.print_help()
     return 1

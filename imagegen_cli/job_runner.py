@@ -12,6 +12,7 @@ from pathlib import Path
 from typing import Any
 
 from .filter_manifest import FilterDefinition
+from .history import build_metadata, metadata_sidecar_path, write_metadata
 
 
 @dataclass
@@ -20,6 +21,7 @@ class JobEvent:
     message: str
     progress: int | None = None
     image_path: Path | None = None
+    metadata_path: Path | None = None
 
 
 class ImageJobRunner(threading.Thread):
@@ -31,13 +33,29 @@ class ImageJobRunner(threading.Thread):
         self._cancel = threading.Event()
         self._current_process: subprocess.Popen[str] | None = None
         self._preview_path: Path | None = None
+        self._executed_commands: list[list[str]] = []
 
     def cancel(self) -> None:
         self._cancel.set()
         self._terminate_process_group()
 
-    def _emit(self, kind: str, message: str, progress: int | None = None, image_path: Path | None = None) -> None:
-        self.events.put(JobEvent(kind=kind, message=message, progress=progress, image_path=image_path))
+    def _emit(
+        self,
+        kind: str,
+        message: str,
+        progress: int | None = None,
+        image_path: Path | None = None,
+        metadata_path: Path | None = None,
+    ) -> None:
+        self.events.put(
+            JobEvent(
+                kind=kind,
+                message=message,
+                progress=progress,
+                image_path=image_path,
+                metadata_path=metadata_path,
+            )
+        )
 
     def _terminate_process_group(self) -> None:
         if self._current_process and self._current_process.poll() is None:
@@ -50,6 +68,7 @@ class ImageJobRunner(threading.Thread):
         script = Path(__file__).resolve().parents[1] / self.filter_def.script_path
         cmd = [str(script), str(size), str(output_dir), file_name]
         self._emit("status", f"[{stage}] running: {' '.join(cmd)}")
+        self._executed_commands.append(cmd.copy())
         self._current_process = subprocess.Popen(
             cmd,
             stdout=subprocess.PIPE,
@@ -100,8 +119,22 @@ class ImageJobRunner(threading.Thread):
                 raise InterruptedError("job canceled after preview")
 
             self._emit("status", "starting full render", progress=60)
+            script_path = Path(__file__).resolve().parents[1] / self.filter_def.script_path
             final_path = self._run_script(size, output_dir, file_name, "full")
-            self._emit("done", f"render complete: {final_path}", progress=100, image_path=final_path)
+            metadata = build_metadata(
+                filter_id=self.filter_def.id,
+                values=self.values,
+                commands=self._executed_commands,
+                script_path=script_path,
+            )
+            metadata_path = write_metadata(metadata, metadata_sidecar_path(output_dir, file_name))
+            self._emit(
+                "done",
+                f"render complete: {final_path}",
+                progress=100,
+                image_path=final_path,
+                metadata_path=metadata_path,
+            )
         except InterruptedError as exc:
             self._cleanup_preview()
             self._emit("canceled", str(exc), progress=0)
