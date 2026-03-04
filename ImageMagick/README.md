@@ -1,6 +1,23 @@
 Generate a bunch of images for testing.
 Requires a recent install of ImageMagick: www.imagemagick.org
 
+
+## Environment (uv)
+
+From the repository root:
+
+```bash
+uv venv .venv
+source .venv/bin/activate
+uv sync
+```
+
+Then run CLI commands using `uv run`:
+
+```bash
+uv run imagegen run-all --size 256 --count 1 --output-dir ./out
+```
+
 ## Modern CLI
 
 A new Python CLI is available via `imagegen` with subcommands:

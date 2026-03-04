@@ -1,65 +1,63 @@
 # imagegen
 
-generate images from the commandline for testing and stuff.
+Generate images from the command line for testing and experimentation.
+
+## Environment and packaging (uv + venv)
+
+This project is packaged as a Python application (`pyproject.toml`) and works best with `uv`.
+
+```bash
+uv venv .venv
+source .venv/bin/activate
+uv sync
+```
+
+Install the package in editable mode with optional GUI dependencies:
+
+```bash
+uv sync --extra gui
+```
+
+Run commands inside the project environment without activating:
+
+```bash
+uv run imagegen --help
+```
 
 ## CLI
 
-This repository now includes a Python CLI package at `src/imagegen_cli`.
-
-From the repository root, run:
+This repository includes a Python CLI package in `src/imagegen_cli`.
 
 ```bash
-PYTHONPATH=src python3 -m imagegen_cli --help
-generate images from the commandline for testing and stuff
+uv run imagegen list-filters
+uv run imagegen inspect-filter fractal_swirl
+uv run imagegen run-filter fractal_swirl --size 256 --output-dir ./out --file-name sample
+```
+
+`run-filter` arguments are generated from the manifest schema so the same parameter metadata can be reused by a GUI.
 
 ## Filter manifest
 
 `filters.json` is the single source of truth for generator metadata and parameter schemas.
-Each manifest entry provides:
+Each entry provides:
 
 - human-readable name, script path, category, and tags
 - parameter definitions (`name`, `type`, `min`/`max`, `default`, `step`, enum choices)
-- output behavior + preview-safe limits for UIs
-
-## CLI
-
-Run the Python CLI with:
-
-```bash
-python -m imagegen_cli list-filters
-python -m imagegen_cli inspect-filter fractal_swirl
-python -m imagegen_cli inspect-filter fractal_swirl --json
-python -m imagegen_cli run-filter fractal_swirl --size 256 --output-dir ./out --file-name sample
-```
-
-`run-filter` arguments are generated from the manifest schema, so CLI control definitions can be reused by future GUI rendering.
-## Install
-
-```bash
-pip install .
-```
-
-## Run
-
-```bash
-imagegen --help
-```
-
+- output behavior and preview-safe limits for UIs
 
 ## Local-first GUI (PySide6)
 
-A desktop GUI is available with a manifest-driven control panel and async render runner:
+A desktop GUI is available with a manifest-driven control panel and asynchronous render runner:
 
 ```bash
-pip install .[gui]
-imagegen gui
+uv run imagegen gui
 ```
 
-Implemented end-to-end flow:
+Implemented flow:
 
 1. Select a filter from `filters.json`
-2. UI controls are generated dynamically from each filter parameter schema
+2. Controls are generated dynamically from each parameter schema
 3. Click **Generate** to run an async job thread that executes ImageMagick scripts
 4. A preview stage renders first at preview-safe size, then full render at requested size
-5. Progress + logs stream into the UI in realtime via a thread-safe event queue
+5. Progress and logs stream into the UI in real time via a thread-safe event queue
 6. **Cancel** stops the process group and cleans temporary preview files
