@@ -23,3 +23,14 @@ python -m imagegen_cli run-filter fractal_swirl --size 256 --output-dir ./out --
 ```
 
 `run-filter` arguments are generated from the manifest schema, so CLI control definitions can be reused by future GUI rendering.
+## Install
+
+```bash
+pip install .
+```
+
+## Run
+
+```bash
+imagegen --help
+```

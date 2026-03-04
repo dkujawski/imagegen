@@ -1,1 +1,1 @@
-"""CLI helpers for imagegen."""
+"""CLI package for imagegen."""
