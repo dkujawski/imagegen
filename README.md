@@ -44,3 +44,22 @@ pip install .
 ```bash
 imagegen --help
 ```
+
+
+## Local-first GUI (PySide6)
+
+A desktop GUI is available with a manifest-driven control panel and async render runner:
+
+```bash
+pip install .[gui]
+imagegen gui
+```
+
+Implemented end-to-end flow:
+
+1. Select a filter from `filters.json`
+2. UI controls are generated dynamically from each filter parameter schema
+3. Click **Generate** to run an async job thread that executes ImageMagick scripts
+4. A preview stage renders first at preview-safe size, then full render at requested size
+5. Progress + logs stream into the UI in realtime via a thread-safe event queue
+6. **Cancel** stops the process group and cleans temporary preview files
