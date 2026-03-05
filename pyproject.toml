@@ -25,11 +25,11 @@ gui = [
 imagegen = "imagegen_cli.main:app"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/imagegen_cli"]
+packages = ["imagegen_cli"]
 
 [tool.hatch.build.targets.sdist]
 include = [
-  "/src",
+  "/imagegen_cli",
   "/ImageMagick",
   "/filters.json",
   "/README.md",
@@ -37,4 +37,3 @@ include = [
 
 [tool.uv]
 package = true
-
